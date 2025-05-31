@@ -1,0 +1,166 @@
+import java.util.ArrayList;Add commentMore actions
+import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
+
+class Task {
+    private static int count = 1;
+    private final int id;
+    private String description;
+
+    public Task(String description) {
+        this.id = count++;
+        this.description = description;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String desc) {
+        this.description = desc;
+    }
+
+    @Override
+    public String toString() {
+        return id + ". " + description;
+    }
+}
+
+public class ToDoApp {
+    private static final Scanner sc = new Scanner(System.in);
+    private static final List<Task> tasks = new ArrayList<>();
+
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("\n--- TO-DO LIST MENU ---");
+            System.out.println("1. Add Task");
+            System.out.println("2. View Tasks");
+            System.out.println("3. Edit Task");
+            System.out.println("4. Delete Task");
+            System.out.println("5. Search Task");
+            System.out.println("6. Exit");
+            System.out.print("Enter your choice: ");
+
+            int choice;
+            try {
+                choice = Integer.parseInt(sc.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
+            }
+
+            switch (choice) {
+                case 1 -> addTask();
+                case 2 -> viewTasks();
+                case 3 -> editTask();
+                case 4 -> deleteTask();
+                case 5 -> searchTasks();
+                case 6 -> {
+                    System.out.println("Exiting...");
+                    return;
+                }
+                default -> System.out.println("Invalid choice, please try again.");
+            }
+        }
+    }
+
+    private static void addTask() {
+        System.out.print("Enter task description: ");
+        String desc = sc.nextLine();
+
+        for (Task t : tasks) {
+            if (t.getDescription().equalsIgnoreCase(desc)) {
+                System.out.println("Task already exists!");
+                return;
+            }
+        }
+
+        tasks.add(new Task(desc));
+        System.out.println("Task added!");
+    }
+
+    private static void viewTasks() {
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks available.");
+            return;
+        }
+
+        System.out.println("\nYour Tasks:");
+        for (Task task : tasks) {
+            System.out.println(task);
+        }
+    }
+
+    private static void editTask() {
+        viewTasks();
+        if (tasks.isEmpty()) 
+        return;
+
+        System.out.print("Enter task ID to edit: ");
+        int id;
+        try {
+            id = Integer.parseInt(sc.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid ID.");
+            return;
+        }
+
+        for (Task task : tasks) {
+            if (task.getId() == id) {
+                System.out.print("Enter new description: ");
+                String newDesc = sc.nextLine();
+                task.setDescription(newDesc);
+                System.out.println("Task updated!");
+                return;
+            }
+        }
+        System.out.println("Task not found.");
+    }
+
+    private static void deleteTask() {
+        viewTasks();
+        if (tasks.isEmpty()) return;
+
+        System.out.print("Enter task ID to delete: ");
+        int id;
+        try {
+            id = Integer.parseInt(sc.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid ID.");
+            return;
+        }
+
+        Iterator<Task> iterator = tasks.iterator();
+        while (iterator.hasNext()) {
+            Task task = iterator.next();
+            if (task.getId() == id) {
+                iterator.remove();
+                System.out.println("Task deleted.");
+                return;
+            }
+        }
+        System.out.println("Task not found.");
+    }
+
+    private static void searchTasks() {
+        System.out.print("Enter keyword to search: ");
+        String keyword = sc.nextLine().toLowerCase();
+
+        boolean found = false;
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase().contains(keyword)) {
+                System.out.println(task);
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No tasks found with the given keyword.");
+        }
+    }
+}
